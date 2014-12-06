@@ -25,24 +25,38 @@ function init() {
 
 }
 
-var animation = null;
+var targetRotation = null;
 var animate = () => {
 
     requestAnimationFrame(animate);
 
 
-    if (!animation) {
+    if (!targetRotation) {
         var input = LD31.input.shift();
         if (input) {
-            animation = input;
+            targetRotation = input;
+            // rotate cube in "animation" direction until done, then set animation to null again
+            var axis = 'y';
+            if (input === 'UP' || input === 'DOWN') {
+                axis = 'x';
+            } else if (mesh.rotation.x * 180 / Math.PI % 180 !== 0) {
+                axis = 'z';
+            } else {
+                axis = 'y';
+            }
+            var degrees = 90 * (input === 'UP' || input === 'LEFT' ? -1 : 1);
+            targetRotation = {[axis]: mesh.rotation[axis] + degrees * (Math.PI / 180)};
+            var tween = new TWEEN.Tween(mesh.rotation).to(targetRotation, 500);
+
+            tween.onComplete(() => {
+                targetRotation = null;
+            });
+            tween.easing(TWEEN.Easing.Circular.InOut)
+            tween.start();
         }
     }
 
-    if (animation) {
-        // rotate cube in "animation" direction until done, then set animation to null again
-        mesh.rotation.y += 0.01;
-        console.log(mesh.rotation.y);
-    }
+    TWEEN.update();
 
     renderer.render(scene, camera);
 
