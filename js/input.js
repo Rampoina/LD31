@@ -12,7 +12,9 @@ window.LD31 = window.LD31 || {};
 
 	document.addEventListener("keydown", (e) => {
 		if (keymap[e.keyCode]) {
-			queue.push(keymap[e.keyCode]);
+			if (queue.length < 3) {
+				queue.push(keymap[e.keyCode]);
+			}
 		}
 	}, false);
 
