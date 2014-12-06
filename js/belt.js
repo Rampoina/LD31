@@ -17,16 +17,16 @@ window.LD31 = window.LD31 || {};
 		belt.update = function() {
 			if (currentItem === null) {
 				currentItem = newItem();
-				currentItem.mesh.position.y = 20 * 14;
-				currentItem.slot = Math.round((Math.random() - .5) * 8) // -4 to 4;
-				currentItem.mesh.position.x = currentItem.slot * 20;
+				currentItem.mesh.position.y = 160 * 11;
+				// currentItem.slot = Math.round((Math.random() - .5) * 8) // -4 to 4;
+				// currentItem.mesh.position.x = currentItem.slot * 20;
 				belt.mesh.add(currentItem.mesh);
 			}
 
 			if (!animating) {
 				console.log('go');
 				var tween = new TWEEN.Tween({y: currentItem.mesh.position.y})
-				.to({y: currentItem.mesh.position.y - 20}, 1000);
+				.to({y: currentItem.mesh.position.y - 160}, 1000);
 
 				tween.onUpdate(function() {
 					currentItem.mesh.position.y = this.y;
@@ -48,7 +48,7 @@ window.LD31 = window.LD31 || {};
 
 	function newItem() {
 		var item = {};
-		item.mesh = new THREE.Mesh(new THREE.BoxGeometry(20, 20, 20), new THREE.MeshBasicMaterial({color: 0x00ff00}));
+		item.mesh = new THREE.Mesh(new THREE.BoxGeometry(160, 160, 160), new THREE.MeshBasicMaterial({color: 0x00ff00}));
 		return item;
 	}
 
