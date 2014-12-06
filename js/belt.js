@@ -33,7 +33,8 @@ window.LD31 = window.LD31 || {};
 	            });
 				tween.onComplete(() => {
 					animating = false;
-					if (currentItem.mesh.position.y <= 100.01) {
+					if (currentItem.mesh.position.y <= 160.01) {
+						belt.mesh.remove(currentItem.mesh);
 						currentItem = null;
 					}
 	            });

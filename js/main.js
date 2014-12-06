@@ -7,6 +7,7 @@ var belts;
 function init() {
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
+    // camera = new THREE.OrthographicCamera(window.innerWidth / -1, window.innerWidth / 1, window.innerHeight / 1, window.innerWidth / -1, 1, 1000000);
     camera.position.z = 1600;
 
     scene = new THREE.Scene();
