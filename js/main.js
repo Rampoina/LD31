@@ -1,3 +1,5 @@
+window.LD31 = window.LD31 || {};
+
 var camera, scene, renderer;
 var geometry, material, mesh;
 
@@ -23,11 +25,24 @@ function init() {
 
 }
 
+var animation = null;
 var animate = () => {
 
     requestAnimationFrame(animate);
 
-    mesh.rotation.y += 0.01;
+
+    if (!animation) {
+        var input = LD31.input.shift();
+        if (input) {
+            animation = input;
+        }
+    }
+
+    if (animation) {
+        // rotate cube in "animation" direction until done, then set animation to null again
+        mesh.rotation.y += 0.01;
+        console.log(mesh.rotation.y);
+    }
 
     renderer.render(scene, camera);
 
