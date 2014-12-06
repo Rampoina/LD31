@@ -2,15 +2,16 @@ window.LD31 = window.LD31 || {};
 
 var camera, scene, renderer;
 var geometry, material, mesh;
+var belts;
 
 function init() {
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
-    camera.position.z = 1000;
+    camera.position.z = 600;
 
     scene = new THREE.Scene();
 
-    geometry = new THREE.CubeGeometry(200, 200, 200);
+    geometry = new THREE.BoxGeometry(160, 160, 160);
     material = new THREE.MeshBasicMaterial({
         color: 0x00ff00,
         vertexColors: THREE.FaceColors
@@ -22,6 +23,10 @@ function init() {
     }
     scene.add(mesh);
 
+    belts = [LD31.belts.create(0), LD31.belts.create(90), LD31.belts.create(180), LD31.belts.create(270)];
+    belts.forEach((belt) => scene.add(belt.mesh));
+    
+
     renderer = new THREE.WebGLRenderer({antialias: true});
     renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -32,6 +37,7 @@ function init() {
 var originalRotation = null;
 var axisX = new THREE.Vector3(1, 0, 0);
 var axisY = new THREE.Vector3(0, 1, 0);
+var axisZ = new THREE.Vector3(0, 0, 1);
 var animate = () => {
 
     requestAnimationFrame(animate);
@@ -60,11 +66,14 @@ var animate = () => {
         }
     }
 
-    TWEEN.update();
+    belts.forEach((belt) => belt.update());
 
+    TWEEN.update();
     renderer.render(scene, camera);
 
 }
 
-init();
-animate();
+setTimeout(() => {
+    init();
+    animate();
+}, 0);
