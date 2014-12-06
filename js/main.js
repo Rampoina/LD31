@@ -29,34 +29,31 @@ function init() {
 
 }
 
-var targetRotation = null;
+var originalRotation = null;
+var axisX = new THREE.Vector3(1, 0, 0);
+var axisY = new THREE.Vector3(0, 1, 0);
 var animate = () => {
 
     requestAnimationFrame(animate);
 
 
-    if (!targetRotation) {
+    if (!originalRotation) {
         var input = LD31.input.shift();
         if (input) {
-            targetRotation = input;
-            // rotate cube in "animation" direction until done, then set animation to null again
-            var axis = input === 'UP' || input === 'DOWN' ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(0, 1, 0);
-            var angle = {value: 90 * (input === 'UP' || input === 'LEFT' ? -1 : 1)};
-            console.log('go', angle.value)
-            targetRotation = mesh.quaternion.clone();
-            
+            originalRotation = mesh.quaternion.clone();
 
-            var tween = new TWEEN.Tween({value: 0}).to(angle, 250);
+            var axis = input === 'UP' || input === 'DOWN' ? axisX : axisY;
+            var tween = new TWEEN.Tween({value: 0}).to({value: 90 * (input === 'UP' || input === 'LEFT' ? -1 : 1)}, 250);
 
             var q = new THREE.Quaternion();
             tween.onUpdate(function() {
                 q.setFromAxisAngle(axis, this.value * (Math.PI / 180));
-                mesh.quaternion.copy(targetRotation); // reset to origin
+                mesh.quaternion.copy(originalRotation); // reset to origin
                 mesh.quaternion.multiplyQuaternions(q, mesh.quaternion); // apply rotation progress
             });
 
             tween.onComplete(() => {
-                targetRotation = null;
+                originalRotation = null;
             });
             tween.easing(TWEEN.Easing.Circular.InOut)
             tween.start();
