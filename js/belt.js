@@ -11,22 +11,8 @@ window.LD31 = window.LD31 || {};
 
 		var animating = false;
 
-		belt.update = function(mesh, faces) {
-            var face;
-            switch (angle) {
-                case 0:
-                    face = faces["UP"];
-                    break;
-                case 90:
-                    face = faces["RIGHT"];
-                    break;
-                case 180:
-                    face = faces["DOWN"];
-                    break;
-                case 270:
-                    face = faces["LEFT"];
-                    break;
-            }
+		var dropping = [];
+		belt.update = function(mesh, limit) {
 
 			if (currentItem === null) {
 				currentItem = newItem();
@@ -37,19 +23,16 @@ window.LD31 = window.LD31 || {};
 			}
 
 			if (!animating) {
-				console.log('go');
 				var tween = new TWEEN.Tween({y: currentItem.mesh.position.y})
-				.to({y: currentItem.mesh.position.y - 160}, 1000);
+				.to({y: currentItem.mesh.position.y - 160}, 500);
 
 				tween.onUpdate(function() {
 					currentItem.mesh.position.y = this.y;
 	            });
 				tween.onComplete(() => {
 					animating = false;
-					if (currentItem.mesh.position.y <= 160.01*(face.length + 1)) {
-						belt.mesh.remove(currentItem.mesh);
-                        mesh.add(currentItem.mesh);
-                        face.push(currentItem);
+					if (currentItem.mesh.position.y <= 160.01 * (limit + 1)) {
+						dropping.push(currentItem);
 						currentItem = null;
 					}
 	            });
@@ -57,14 +40,28 @@ window.LD31 = window.LD31 || {};
 	            tween.easing(TWEEN.Easing.Circular.InOut);
 	            tween.start();
 			}
+
+			var drop = dropping.shift();
+			if (drop) {
+				belt.mesh.remove(drop.mesh);
+				return drop;
+			}
+			return null;
 		};
 
 		return belt;
 	};
 
+	var palette = [0x002b36, 0x073642, 0x586e75, 0x657b83,
+                0x839496, 0x93a1a1, 0xeee8d5, 0xfdf6e3];
 	function newItem() {
 		var item = {};
-		item.mesh = new THREE.Mesh(new THREE.BoxGeometry(160, 160, 160), new THREE.MeshBasicMaterial({color: 0x00ff00}));
+		var color = palette[Math.floor(Math.random() * palette.length - 2)];
+		item.mesh = new THREE.Mesh(
+			new THREE.BoxGeometry(160, 160, 160),
+			new THREE.MeshBasicMaterial({color: color})
+		);
+		item.color = color;
 		return item;
 	}
 
