@@ -5,16 +5,29 @@ window.LD31 = window.LD31 || {};
 		var belt = {};
 
 		belt.mesh = new THREE.Object3D();
-
-		var q = new THREE.Quaternion();
-		q.setFromAxisAngle(new THREE.Vector3(0, 0, 1), angle * (Math.PI / 180));
-        belt.mesh.quaternion.multiplyQuaternions(q, belt.mesh.quaternion);
+        belt.mesh.rotateOnAxis(new THREE.Vector3(0, 0, 1), angle * (Math.PI / 180));
 
 		var currentItem = null;
 
 		var animating = false;
 
-		belt.update = function() {
+		belt.update = function(mesh, faces) {
+            var face;
+            switch (angle) {
+                case 0:
+                    face = faces["UP"];
+                    break;
+                case 90:
+                    face = faces["RIGHT"];
+                    break;
+                case 180:
+                    face = faces["DOWN"];
+                    break;
+                case 270:
+                    face = faces["LEFT"];
+                    break;
+            }
+
 			if (currentItem === null) {
 				currentItem = newItem();
 				currentItem.mesh.position.y = 160 * 11;
@@ -33,8 +46,10 @@ window.LD31 = window.LD31 || {};
 	            });
 				tween.onComplete(() => {
 					animating = false;
-					if (currentItem.mesh.position.y <= 160.01) {
+					if (currentItem.mesh.position.y <= 160.01*(face.length + 1)) {
 						belt.mesh.remove(currentItem.mesh);
+                        mesh.add(currentItem.mesh);
+                        face.push(currentItem);
 						currentItem = null;
 					}
 	            });
